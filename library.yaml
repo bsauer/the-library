@@ -10,6 +10,9 @@ default_dirs:
     - global: ~/.cursor/commands/
 
 library:
-  skills: []
+  skills:
+    - name: generate-svg
+      description: Generate animated SVG diagrams in dark or light theme with color palettes, animation patterns, and icon templates
+      source: git@github.com:bsauer/infra-tools.git//skills/generate-svg/SKILL.md#main
   agents: []
   prompts: []
