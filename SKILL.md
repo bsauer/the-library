@@ -59,8 +59,12 @@ The `source` field in `library.yaml` supports these formats (auto-detected):
 - `/absolute/path/to/SKILL.md` — local filesystem
 - `https://github.com/org/repo/blob/main/path/to/SKILL.md` — GitHub browser URL
 - `https://raw.githubusercontent.com/org/repo/main/path/to/SKILL.md` — GitHub raw URL
+- `https://dev.azure.com/org/project/_git/repo?path=/path/to/SKILL.md&version=GBmain` — Azure DevOps browser URL
+- `https://dev.azure.com/org/project/_apis/git/repositories/repo/items?path=/path/to/SKILL.md&versionDescriptor.version=main&versionDescriptor.versionType=branch` — Azure DevOps raw/API URL
+- `git@github.com:org/repo.git//path/to/SKILL.md#main` — GitHub SSH URL
+- `git@ssh.dev.azure.com:v3/org/project/repo//path/to/SKILL.md#main` — Azure DevOps SSH URL
 
-Both GitHub URL formats are supported. Parse org, repo, branch, and file path from the URL structure. For private repos, use SSH or `GITHUB_TOKEN` for auth automatically.
+All URL formats are auto-detected. Parse org, repo, branch, and file path from the URL structure. For private repos, use SSH or `GITHUB_TOKEN` for GitHub auth, and PAT, Azure AD credentials, or SSH keys for Azure DevOps auth.
 
 **Important:** The source points to a specific file (SKILL.md, AGENT.md, or prompt file). We always pull the entire parent directory, not just the file.
 
@@ -79,9 +83,49 @@ Both GitHub URL formats are supported. Parse org, repo, branch, and file path fr
 - Clone URL: `https://github.com/<org>/<repo>.git`
 - File location within repo: `<path>`
 
+**Azure DevOps browser URLs** match `https://dev.azure.com/<org>/<project>/_git/<repo>?path=/<path>&version=GB<branch>`:
+- Parse: `org`, `project`, `repo`, `branch` (strip `GB` prefix from `version` param), `file_path` (from `path` param)
+- Clone URL: `https://dev.azure.com/<org>/<project>/_git/<repo>`
+- File location within repo: `<path>` (strip leading `/` from the `path` query param)
+
+**Azure DevOps raw/API URLs** match `https://dev.azure.com/<org>/<project>/_apis/git/repositories/<repo>/items?path=/<path>&versionDescriptor.version=<branch>&versionDescriptor.versionType=branch`:
+- Parse: `org`, `project`, `repo`, `branch` (from `versionDescriptor.version` param), `file_path` (from `path` param)
+- Clone URL: `https://dev.azure.com/<org>/<project>/_git/<repo>`
+- File location within repo: `<path>` (strip leading `/` from the `path` query param)
+
+**GitHub SSH URLs** match `git@github.com:<org>/<repo>.git//<path>#<branch>`:
+- Parse: `org`, `repo`, `file_path` (after `//`), `branch` (after `#`, defaults to `main` if absent)
+- Clone URL: `git@github.com:<org>/<repo>.git`
+- File location within repo: `<path>`
+
+**Azure DevOps SSH URLs** match `git@ssh.dev.azure.com:v3/<org>/<project>/<repo>//<path>#<branch>`:
+- Parse: `org`, `project`, `repo`, `file_path` (after `//`), `branch` (after `#`, defaults to `main` if absent)
+- Clone URL: `git@ssh.dev.azure.com:v3/<org>/<project>/<repo>`
+- File location within repo: `<path>`
+
 ## GitHub Workflow
 
 When working with GitHub sources, prefer `gh api` for accessing single files (e.g., reading a SKILL.md to check metadata). For pulling entire skill directories, clone into a temp dir per the steps below.
+
+**Fetching (use):**
+1. Clone the repo with `git clone --depth 1 <clone_url>` into a temporary directory
+2. Navigate to the parent directory of the referenced file
+3. Copy that entire directory to the target local directory
+4. The temporary directory is cleaned up automatically
+
+**Pushing (push):**
+1. Clone the repo with `git clone --depth 1 <clone_url>` into a temporary directory
+2. Overwrite the skill directory in the clone with the local version
+3. Stage only the relevant changes: `git add <skill_directory_path>`
+4. Commit with message: `library: updated <skill name> <what changed>`
+5. Push to remote
+6. The temporary directory is cleaned up automatically
+
+## Azure DevOps Workflow
+
+When working with Azure DevOps sources, use `az repos` CLI or the REST API for accessing single files. For pulling entire skill directories, clone into a temp dir using the same fetch/push pattern as GitHub.
+
+**Authentication:** Azure DevOps clone URLs require a PAT (Personal Access Token) or Azure AD credentials. The clone URL embeds the PAT like `https://<PAT>@dev.azure.com/<org>/<project>/_git/<repo>`, or you can use Git Credential Manager which handles auth automatically.
 
 **Fetching (use):**
 1. Clone the repo with `git clone --depth 1 <clone_url>` into a temporary directory
@@ -169,6 +213,18 @@ library:
       description: Generate and burn AI-powered captions onto green screen videos
       source: https://raw.githubusercontent.com/myorg/video-tools/main/skills/green-screen-captions/SKILL.md
       requires: [agent:video-processor, prompt:caption-style]
+
+    - name: deploy-infra
+      description: Deploy infrastructure using Terraform and Azure pipelines
+      source: https://dev.azure.com/myorg/platform/_git/infra-skills?path=/skills/deploy-infra/SKILL.md&version=GBmain
+
+    - name: secret-scanner
+      description: Scan repos for leaked secrets and credentials
+      source: git@github.com:myorg/security-tools.git//skills/secret-scanner/SKILL.md#main
+
+    - name: pipeline-lint
+      description: Validate and lint Azure DevOps pipeline YAML files
+      source: git@ssh.dev.azure.com:v3/myorg/platform/pipeline-tools//skills/pipeline-lint/SKILL.md#main
 
   agents:
     - name: video-processor
