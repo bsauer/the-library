@@ -14,9 +14,9 @@ The Library solves a specific problem: you've built powerful agentics scattered 
 
 ## What It Is
 
-The Library is a single skill whose only job is to manage other skills. It's a catalog of references — local file paths and GitHub repo URLs — that point to where your agentics live. Nothing is copied or installed until you ask for it.
+The Library is a single skill whose only job is to manage other skills. It's a catalog of references — local file paths, GitHub repo URLs, and Azure DevOps repo URLs — that point to where your agentics live. Nothing is copied or installed until you ask for it.
 
-Think of it as a `package.json` for agent capabilities — but instead of packages, you're managing skills, agents, and prompts. Instead of a registry, you're pointing at your own private GitHub repos and local paths.
+Think of it as a `package.json` for agent capabilities — but instead of packages, you're managing skills, agents, and prompts. Instead of a registry, you're pointing at your own private repos and local paths.
 
 **This is a pure agent application.** There are no scripts, no CLIs, no dependencies, no build tools. The entire application is encoded in `SKILL.md` and a set of cookbook instructions that teach the agent exactly what to do. The agent IS the runtime. This matters because:
 
@@ -79,15 +79,19 @@ The catalog stores pointers, not copies. Skills live in their source repos. You 
 
 ### Source Formats
 
-| Format             | Example                                                            |
-| ------------------ | ------------------------------------------------------------------ |
-| Local filesystem   | `/absolute/path/to/SKILL.md`                                       |
-| GitHub browser URL | `https://github.com/org/repo/blob/main/path/to/SKILL.md`           |
-| GitHub raw URL     | `https://raw.githubusercontent.com/org/repo/main/path/to/SKILL.md` |
+| Format                | Example                                                                          |
+| --------------------- | -------------------------------------------------------------------------------- |
+| Local filesystem      | `/absolute/path/to/SKILL.md`                                                     |
+| GitHub browser URL    | `https://github.com/org/repo/blob/main/path/to/SKILL.md`                         |
+| GitHub raw URL        | `https://raw.githubusercontent.com/org/repo/main/path/to/SKILL.md`               |
+| Azure DevOps browser  | `https://dev.azure.com/org/project/_git/repo?path=/path/to/SKILL.md&version=GBmain` |
+| Azure DevOps raw/API  | `https://dev.azure.com/org/project/_apis/git/repositories/repo/items?path=/path/to/SKILL.md&...` |
+| GitHub SSH            | `git@github.com:org/repo.git//path/to/SKILL.md#main`                             |
+| Azure DevOps SSH      | `git@ssh.dev.azure.com:v3/org/project/repo//path/to/SKILL.md#main`               |
 
 The source points to a specific file. The system pulls the entire parent directory (skills include scripts, references, assets — not just the markdown file).
 
-For private repos, authentication uses SSH keys or `GITHUB_TOKEN` automatically.
+For private repos, authentication uses SSH keys, `GITHUB_TOKEN` (GitHub), or PAT / Azure AD credentials (Azure DevOps) automatically.
 
 ### Typed Dependencies
 
@@ -104,7 +108,9 @@ Dependencies are resolved and pulled first, recursively.
 - **Claude Code** (or a compatible agent harness that reads `.cursor/skills/` — e.g., Pi)
 - **git** — for cloning sources and syncing the catalog
 - **gh** (optional) — GitHub CLI for forking, cloning, and private repo access. Install: `brew install gh` or see [gh docs](https://cli.github.com)
-- **GitHub SSH key or `GITHUB_TOKEN`** — for accessing private repos (not needed if using `gh auth login`)
+- **az repos** (optional) — Azure CLI with DevOps extension for Azure DevOps repo access. Install: `az extension add --name azure-devops`
+- **GitHub SSH key or `GITHUB_TOKEN`** — for accessing private GitHub repos (not needed if using `gh auth login`)
+- **Azure DevOps PAT, SSH key, or Azure AD credentials** — for accessing private Azure DevOps repos (not needed if using Git Credential Manager)
 - **just** (optional) — for justfile shortcuts. Install: `brew install just` or see [just docs](https://github.com/casey/just)
 
 ## Installation

@@ -56,16 +56,20 @@ If the entry has a `requires` field:
   ```
 - If the agent or prompt is nested in a subdirectory under the `agents/` or `commands/` directories, copy the subdirectory to the target as well, creating the subdir if it doesn't exist. This is useful because it keeps the agents or commands grouped together.
 
-**If source is a GitHub URL**:
-- Parse the URL to extract: `org`, `repo`, `branch`, `file_path`
-  - Browser URL pattern: `https://github.com/<org>/<repo>/blob/<branch>/<path>`
-  - Raw URL pattern: `https://raw.githubusercontent.com/<org>/<repo>/<branch>/<path>`
-- Determine the clone URL: `https://github.com/<org>/<repo>.git`
+**If source is a remote URL** (GitHub or Azure DevOps, HTTPS or SSH):
+- Parse the URL to extract: `org`, `repo`, `branch`, `file_path` (and `project` for Azure DevOps)
+  - GitHub browser: `https://github.com/<org>/<repo>/blob/<branch>/<path>`
+  - GitHub raw: `https://raw.githubusercontent.com/<org>/<repo>/<branch>/<path>`
+  - GitHub SSH: `git@github.com:<org>/<repo>.git//<path>#<branch>`
+  - Azure DevOps browser: `https://dev.azure.com/<org>/<project>/_git/<repo>?path=/<path>&version=GB<branch>`
+  - Azure DevOps API: `https://dev.azure.com/<org>/<project>/_apis/git/repositories/<repo>/items?path=/<path>&versionDescriptor.version=<branch>&...`
+  - Azure DevOps SSH: `git@ssh.dev.azure.com:v3/<org>/<project>/<repo>//<path>#<branch>`
+- Determine the clone URL from the parsed components (see SKILL.md Source Parsing Rules)
 - Determine the parent directory path within the repo (everything before the filename)
 - Clone into a temporary directory:
   ```bash
   tmp_dir=$(mktemp -d)
-  git clone --depth 1 --branch <branch> https://github.com/<org>/<repo>.git "$tmp_dir"
+  git clone --depth 1 --branch <branch> <clone_url> "$tmp_dir"
   ```
 - Copy the parent directory of the file to the target:
   ```bash
@@ -76,10 +80,9 @@ If the entry has a `requires` field:
   rm -rf "$tmp_dir"
   ```
 
-**If clone fails (private repo)**, try SSH:
-  ```bash
-  git clone --depth 1 --branch <branch> git@github.com:<org>/<repo>.git "$tmp_dir"
-  ```
+**If HTTPS clone fails (private repo)**, try the SSH clone URL for the same provider:
+  - GitHub: `git@github.com:<org>/<repo>.git`
+  - Azure DevOps: `git@ssh.dev.azure.com:v3/<org>/<project>/<repo>`
 
 ### 6. Verify Installation
 - Confirm the target directory exists

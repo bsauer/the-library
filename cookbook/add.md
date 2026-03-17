@@ -24,7 +24,8 @@ Figure out the type from the user's prompt or the source path:
 
 ### 3. Validate the Source
 - **Local path**: Verify the file exists at the given path
-- **GitHub URL**: Verify the URL is well-formed (matches browser or raw URL patterns)
+- **GitHub URL**: Verify the URL is well-formed (matches browser, raw, or SSH URL patterns)
+- **Azure DevOps URL**: Verify the URL is well-formed (matches browser, API, or SSH URL patterns)
 - Confirm the source points to a specific file, not a directory
 
 ### 4. Parse Dependencies
@@ -53,7 +54,7 @@ Read `library.yaml`, add the new entry under the correct section:
 - For skills reference the `.../<skill-name>/SKILL.md` file,
 - For agents reference the `.../<agent name>.md` file,
 - For prompts reference the `.../<prompt name>.md` file (installed to `.cursor/commands/`),
-- Remember we'll be adding a absolute path or a github url (https or ssh)
+- Remember we'll be adding an absolute path, a GitHub url (https or ssh), or an Azure DevOps url (https or ssh)
 
 ### 6. Commit and Push
 ```bash

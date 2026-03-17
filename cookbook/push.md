@@ -26,7 +26,8 @@ The user provides a skill name or description.
 - If the source has been modified since last pull, warn the user:
   "The source has changes that aren't in your local copy. Pushing will overwrite them. Continue?"
 
-**If source is a GitHub URL:**
+**If source is a remote URL** (GitHub or Azure DevOps, HTTPS or SSH):
+- Parse the URL to determine the clone URL (see SKILL.md Source Parsing Rules)
 - Clone the repo to a temp directory (shallow):
   ```bash
   tmp_dir=$(mktemp -d)
@@ -45,7 +46,8 @@ The user provides a skill name or description.
   ```
 - Confirm the overwrite
 
-**If source is a GitHub URL:**
+**If source is a remote URL** (GitHub or Azure DevOps, HTTPS or SSH):
+- Parse the URL to determine the clone URL (see SKILL.md Source Parsing Rules)
 - If we don't already have a tmp clone from step 3, clone now:
   ```bash
   tmp_dir=$(mktemp -d)

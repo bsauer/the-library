@@ -44,16 +44,15 @@ For each installed entry, fetch the latest from its source:
   cp <prompt_file> <target_directory>/<prompt_name>.md
   ```
 
-**If source is a GitHub URL**:
-- Parse the URL to extract: `org`, `repo`, `branch`, `file_path`
-  - Browser URL pattern: `https://github.com/<org>/<repo>/blob/<branch>/<path>`
-  - Raw URL pattern: `https://raw.githubusercontent.com/<org>/<repo>/<branch>/<path>`
-- Determine the clone URL: `https://github.com/<org>/<repo>.git`
+**If source is a remote URL** (GitHub or Azure DevOps, HTTPS or SSH):
+- Parse the URL to extract: `org`, `repo`, `branch`, `file_path` (and `project` for Azure DevOps)
+  - See SKILL.md Source Parsing Rules for all supported URL patterns
+- Determine the clone URL from the parsed components
 - Determine the parent directory path within the repo (everything before the filename)
 - Clone into a temporary directory:
   ```bash
   tmp_dir=$(mktemp -d)
-  git clone --depth 1 --branch <branch> https://github.com/<org>/<repo>.git "$tmp_dir"
+  git clone --depth 1 --branch <branch> <clone_url> "$tmp_dir"
   ```
 - Copy the parent directory of the file to the target:
   ```bash
@@ -64,10 +63,9 @@ For each installed entry, fetch the latest from its source:
   rm -rf "$tmp_dir"
   ```
 
-**If clone fails (private repo)**, try SSH:
-  ```bash
-  git clone --depth 1 --branch <branch> git@github.com:<org>/<repo>.git "$tmp_dir"
-  ```
+**If HTTPS clone fails (private repo)**, try the SSH clone URL for the same provider:
+  - GitHub: `git@github.com:<org>/<repo>.git`
+  - Azure DevOps: `git@ssh.dev.azure.com:v3/<org>/<project>/<repo>`
 
 ### 5. Resolve Dependencies
 For each installed entry that has a `requires` field:
