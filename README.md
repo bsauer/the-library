@@ -40,7 +40,7 @@ As you build with AI agents, you accumulate skills, custom agents, and prompts �
 ![The Problem: Siloed Teams](images/32_problem_team_sharing.svg)
 
 Existing solutions don't fit:
-- **Global `~/.claude/*`** — exposes everything to every agent. Global is the opposite of specialized.
+- **Global `~/.cursor/*`** — exposes everything to every agent. Global is the opposite of specialized.
 - **Claude Code plugins** — requires marketplace infrastructure, manifests, and locks you into one platform.
 - **Single monorepo** — doesn't reflect reality. You build agentics in specific codebases for specific use cases.
 
@@ -53,14 +53,14 @@ Existing solutions don't fit:
 ```yaml
 default_dirs:
   skills:
-    - default: .claude/skills/
-    - global: ~/.claude/skills/
+    - default: .cursor/skills/
+    - global: ~/.cursor/skills/
   agents:
-    - default: .claude/agents/
-    - global: ~/.claude/agents/
+    - default: .cursor/agents/
+    - global: ~/.cursor/agents/
   prompts:
-    - default: .claude/commands/
-    - global: ~/.claude/commands/
+    - default: .cursor/commands/
+    - global: ~/.cursor/commands/
 
 library:
   skills:
@@ -101,7 +101,7 @@ Dependencies are resolved and pulled first, recursively.
 
 ## Prerequisites
 
-- **Claude Code** (or a compatible agent harness that reads `.claude/skills/` — e.g., Pi)
+- **Claude Code** (or a compatible agent harness that reads `.cursor/skills/` — e.g., Pi)
 - **git** — for cloning sources and syncing the catalog
 - **gh** (optional) — GitHub CLI for forking, cloning, and private repo access. Install: `brew install gh` or see [gh docs](https://cli.github.com)
 - **GitHub SSH key or `GITHUB_TOKEN`** — for accessing private repos (not needed if using `gh auth login`)
@@ -124,20 +124,20 @@ Or fork manually via the GitHub UI.
 
 ### 2. Clone to Global Skills Directory
 
-Clone your fork into `~/.claude/skills/library`. This path is what makes `/library` available as a global slash command in Claude Code.
+Clone your fork into `~/.cursor/skills/library`. This path is what makes `/library` available as a global slash command in Claude Code.
 
 ```bash
 # Using git
-mkdir -p ~/.claude/skills/library
-git clone <your-fork-url> ~/.claude/skills/library
+mkdir -p ~/.cursor/skills/library
+git clone <your-fork-url> ~/.cursor/skills/library
 
 # Or using GitHub CLI
-gh repo clone <yourname>/the-library ~/.claude/skills/library
+gh repo clone <yourname>/the-library ~/.cursor/skills/library
 ```
 
 ### 3. Configure
 
-Open `~/.claude/skills/library/SKILL.md` and update the `## Variables` section with your fork URL. The agent reads these variables at runtime to know where to sync the catalog.
+Open `~/.cursor/skills/library/SKILL.md` and update the `## Variables` section with your fork URL. The agent reads these variables at runtime to know where to sync the catalog.
 
 ```markdown
 # Before (template defaults)
@@ -147,7 +147,7 @@ Open `~/.claude/skills/library/SKILL.md` and update the `## Variables` section w
 - **LIBRARY_REPO_URL**: `https://github.com/yourname/the-library.git`
 ```
 
-The other two variables (`LIBRARY_YAML_PATH` and `LIBRARY_SKILL_DIR`) are correct by default if you cloned to `~/.claude/skills/library/`.
+The other two variables (`LIBRARY_YAML_PATH` and `LIBRARY_SKILL_DIR`) are correct by default if you cloned to `~/.cursor/skills/library/`.
 
 ### 4. Verify
 
@@ -177,7 +177,7 @@ On another device, repo, or agent:
 /library use deploy
 ```
 
-This pulls the skill from the source repo into `.claude/skills/deploy/`.
+This pulls the skill from the source repo into `.cursor/skills/deploy/`.
 
 Want it globally available on this machine?
 
@@ -234,7 +234,7 @@ just search "keyword"
 ## Architecture
 
 ```
-~/.claude/skills/library/     # The Library skill (globally installed)
+~/.cursor/skills/library/     # The Library skill (globally installed)
     SKILL.md                  # Agent instructions — the brain
     library.yaml              # Your catalog of references
     cookbook/                  # Step-by-step guides for each command
@@ -255,7 +255,7 @@ just search "keyword"
 - **Private-first**: Built for your specialized, competitive-edge agentics. Not a public marketplace.
 - **Reference-based**: The catalog stores pointers, not copies. Skills live in their source repos.
 - **Pure agent**: No scripts, no build tools. The SKILL.md teaches the agent everything it needs to know.
-- **Agent-agnostic**: Default target is `.claude/skills/` but supports any directory for any agent harness.
+- **Agent-agnostic**: Default target is `.cursor/skills/` but supports any directory for any agent harness.
 - **Catalog, not manifest**: Entries define what's available, not what's installed. Pull on demand.
 
 ## The Agentic Stack

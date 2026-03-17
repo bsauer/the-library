@@ -4,22 +4,22 @@ overview: Replace all `.claude` directory path references with `.cursor` across 
 todos:
   - id: library-yaml
     content: Replace 6 occurrences of .claude with .cursor in library.yaml
-    status: pending
+    status: completed
   - id: skill-md
     content: Replace 14 occurrences of .claude with .cursor in SKILL.md
-    status: pending
+    status: completed
   - id: readme-md
     content: Replace 19 occurrences of .claude with .cursor in README.md
-    status: pending
+    status: completed
   - id: cookbook-install
     content: Replace 3 occurrences of .claude with .cursor in cookbook/install.md
-    status: pending
+    status: completed
   - id: cookbook-add
     content: Replace 1 occurrence of .claude with .cursor in cookbook/add.md
-    status: pending
+    status: completed
   - id: svg-sprawl
     content: Replace 2 occurrences of .claude with .cursor in images/26_problem_skill_sprawl.svg
-    status: pending
+    status: completed
 isProject: false
 ---
 

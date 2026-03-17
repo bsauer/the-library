@@ -13,8 +13,8 @@ A meta-skill for private-first distribution of agentics (skills, agents, and pro
 > Update these after forking and cloning the library repo.
 
 - **LIBRARY_REPO_URL**: `<your forked repo url>`
-- **LIBRARY_YAML_PATH**: `~/.claude/skills/library/library.yaml`
-- **LIBRARY_SKILL_DIR**: `~/.claude/skills/library/`
+- **LIBRARY_YAML_PATH**: `~/.cursor/skills/library/library.yaml`
+- **LIBRARY_SKILL_DIR**: `~/.cursor/skills/library/`
 
 ## How It Works
 
@@ -113,14 +113,14 @@ By default, items are installed to the **default** directory from `library.yaml`
 ```yaml
 default_dirs:
     skills:
-        - default: .claude/skills/
-        - global: ~/.claude/skills/
+        - default: .cursor/skills/
+        - global: ~/.cursor/skills/
     agents:
-        - default: .claude/agents/
-        - global: ~/.claude/agents/
+        - default: .cursor/agents/
+        - global: ~/.cursor/agents/
     prompts:
-        - default: .claude/commands/
-        - global: ~/.claude/commands/
+        - default: .cursor/commands/
+        - global: ~/.cursor/commands/
 ```
 
 - If the user says "global" or "globally", use the `global` directory.
@@ -141,14 +141,14 @@ This keeps the catalog in sync across devices.
 ```yaml
 default_dirs:
   skills:
-    - default: .claude/skills/
-    - global: ~/.claude/skills/
+    - default: .cursor/skills/
+    - global: ~/.cursor/skills/
   agents:
-    - default: .claude/agents/
-    - global: ~/.claude/agents/
+    - default: .cursor/agents/
+    - global: ~/.cursor/agents/
   prompts:
-    - default: .claude/prompts/
-    - global: ~/.claude/prompts/
+    - default: .cursor/prompts/
+    - global: ~/.cursor/prompts/
 
 library:
   skills:
