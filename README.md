@@ -20,7 +20,7 @@ Think of it as a `package.json` for agent capabilities — but instead of packag
 
 **This is a pure agent application.** There are no scripts, no CLIs, no dependencies, no build tools. The entire application is encoded in `SKILL.md` and a set of cookbook instructions that teach the agent exactly what to do. The agent IS the runtime. This matters because:
 
-- Any agent harness that reads skill files can run it (Claude Code, Pi, etc.)
+- Any agent harness that reads skill files can run it (Cursor, Claude Code, Pi, etc.)
 - You can modify behavior by editing markdown, not code
 - The skill can be extended, forked, and adapted instantly
 - An orchestrator agent can chain library commands without any tooling overhead
@@ -41,7 +41,7 @@ As you build with AI agents, you accumulate skills, custom agents, and prompts �
 
 Existing solutions don't fit:
 - **Global `~/.cursor/*`** — exposes everything to every agent. Global is the opposite of specialized.
-- **Claude Code plugins** — requires marketplace infrastructure, manifests, and locks you into one platform.
+- **Agent plugins** — requires marketplace infrastructure, manifests, and locks you into one platform.
 - **Single monorepo** — doesn't reflect reality. You build agentics in specific codebases for specific use cases.
 
 ## How It Works
@@ -105,7 +105,7 @@ Dependencies are resolved and pulled first, recursively.
 
 ## Prerequisites
 
-- **Claude Code** (or a compatible agent harness that reads `.cursor/skills/` — e.g., Pi)
+- **Cursor** (or a compatible agent harness that reads `.cursor/skills/` — e.g., Claude Code, Pi)
 - **git** — for cloning sources and syncing the catalog
 - **gh** (optional) — GitHub CLI for forking, cloning, and private repo access. Install: `brew install gh` or see [gh docs](https://cli.github.com)
 - **az repos** (optional) — Azure CLI with DevOps extension for Azure DevOps repo access. Install: `az extension add --name azure-devops`
@@ -115,7 +115,7 @@ Dependencies are resolved and pulled first, recursively.
 
 ## Installation
 
-This is a template repo. You fork it, clone it into your global skills directory, and it becomes a `/library` slash command available in every Claude Code session.
+This is a template repo. You fork it, clone it into your global skills directory, and it becomes a `/library` slash command available in every Cursor session.
 
 ### 1. Fork This Repo
 
@@ -130,7 +130,7 @@ Or fork manually via the GitHub UI.
 
 ### 2. Clone to Global Skills Directory
 
-Clone your fork into `~/.cursor/skills/library`. This path is what makes `/library` available as a global slash command in Claude Code.
+Clone your fork into `~/.cursor/skills/library`. This path is what makes `/library` available as a global slash command in Cursor.
 
 ```bash
 # Using git
@@ -157,7 +157,7 @@ The other two variables (`LIBRARY_YAML_PATH` and `LIBRARY_SKILL_DIR`) are correc
 
 ### 4. Verify
 
-Start a new Claude Code session anywhere. `/library list` should work and show an empty catalog.
+Start a new Cursor session anywhere. `/library list` should work and show an empty catalog.
 
 ## Quick Start
 
@@ -275,10 +275,3 @@ just search "keyword"
 | **Prompts**     | Orchestration — coordinate skills and agents   |
 | **Justfile**    | Terminal access without an interactive session |
 | **The Library** | Distribution across devices, teams, and agents |
-
-## Master Agentic Coding
-> Prepare for the future of software engineering
-
-Agentic Engineering is a NEW SKILL for software engineers. And soon it will be a required skill for software engineers. Master it before the masses with [Tactical Agentic Coding](https://agenticengineer.com/tactical-agentic-coding?y=tlibms)
-
-Follow the [IndyDevDan YouTube channel](https://www.youtube.com/@indydevdan) to improve your agentic coding advantage.
