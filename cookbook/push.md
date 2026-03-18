@@ -1,10 +1,10 @@
-# Push a Skill to the Library Source
+# Push an Installed Item to the Source
 
 ## Context
-The user has improved a skill locally and wants to push changes back to the source.
+The user has improved a locally installed skill, agent, or prompt and wants to push changes back to the source.
 
 ## Input
-The user provides a skill name or description.
+The user provides an item name or description.
 
 ## Steps
 
@@ -33,18 +33,33 @@ The user provides a skill name or description.
   tmp_dir=$(mktemp -d)
   git clone --depth 1 --branch <branch> <clone_url> "$tmp_dir"
   ```
-- Compare the skill directory in the clone with the local copy
+  ```powershell
+  $tmp_dir = Join-Path $env:TEMP ("lib_push_" + [guid]::NewGuid().ToString().Substring(0,8))
+  New-Item -ItemType Directory -Force -Path $tmp_dir
+  git clone --depth 1 --branch <branch> <clone_url> "$tmp_dir"
+  ```
+- Compare the cloned item path with the local copy
 - If they differ AND the remote has changes not in the local copy, warn about conflict
 - Ask the user to resolve before continuing
 
 ### 4. Push to Source
 
 **If source is a local path:**
-- Copy the entire local directory to the source location, overwriting:
+- For skills: copy the entire local directory to the source location, overwriting:
   ```bash
-  cp -R <local_directory>/ <source_parent_directory>/
+  cp -R <local_item_path>/. <source_parent_directory>/
   ```
-- Confirm the overwrite
+  ```powershell
+  Copy-Item -Recurse -Force "<local_item_path>\*" "<source_parent_directory>\"
+  ```
+- For agents or prompts: copy the local file to the source location, overwriting:
+  ```bash
+  cp <local_item_path> <source_file_path>
+  ```
+  ```powershell
+  Copy-Item -Force "<local_item_path>" "<source_file_path>"
+  ```
+- Confirm the overwrite and verify the updated file or directory exists at the source location.
 
 **If source is a remote URL** (GitHub or Azure DevOps, HTTPS or SSH):
 - Parse the URL to determine the clone URL (see SKILL.md Source Parsing Rules)
@@ -53,18 +68,50 @@ The user provides a skill name or description.
   tmp_dir=$(mktemp -d)
   git clone --depth 1 --branch <branch> <clone_url> "$tmp_dir"
   ```
-- Remove the old skill directory in the clone:
-  ```bash
-  rm -rf "$tmp_dir/<skill_path_in_repo>"
+  ```powershell
+  $tmp_dir = Join-Path $env:TEMP ("lib_push_" + [guid]::NewGuid().ToString().Substring(0,8))
+  New-Item -ItemType Directory -Force -Path $tmp_dir
+  git clone --depth 1 --branch <branch> <clone_url> "$tmp_dir"
   ```
-- Copy the local version into the clone:
-  ```bash
-  cp -R <local_directory>/ "$tmp_dir/<skill_path_in_repo>/"
-  ```
+- For skills:
+  - Remove the old directory in the clone.
+    ```bash
+    rm -rf "$tmp_dir/<item_path_in_repo>"
+    ```
+    ```powershell
+    Remove-Item -Recurse -Force "$tmp_dir\<item_path_in_repo>"
+    ```
+  - Recreate the directory and copy the local contents into it.
+    ```bash
+    mkdir -p "$tmp_dir/<item_path_in_repo>"
+    cp -R <local_item_path>/. "$tmp_dir/<item_path_in_repo>/"
+    ```
+    ```powershell
+    New-Item -ItemType Directory -Force -Path "$tmp_dir\<item_path_in_repo>"
+    Copy-Item -Recurse -Force "<local_item_path>\*" "$tmp_dir\<item_path_in_repo>\"
+    ```
+- For agents or prompts:
+  - Remove the old file in the clone.
+    ```bash
+    rm -f "$tmp_dir/<item_path_in_repo>"
+    ```
+    ```powershell
+    Remove-Item -Force "$tmp_dir\<item_path_in_repo>"
+    ```
+  - Create the parent directory if needed, then copy the local file into place.
+    ```bash
+    mkdir -p "$tmp_dir/<item_parent_path>"
+    cp <local_item_path> "$tmp_dir/<item_path_in_repo>"
+    ```
+    ```powershell
+    New-Item -ItemType Directory -Force -Path "$tmp_dir\<item_parent_path>"
+    Copy-Item -Force "<local_item_path>" "$tmp_dir\<item_path_in_repo>"
+    ```
+- Verify the expected file exists in the cloned repo before staging.
 - Stage ONLY the relevant changes:
   ```bash
   cd "$tmp_dir"
-  git add <skill_path_in_repo>
+  git add <item_path_in_repo>
   ```
 - Commit with the standard format:
   ```bash
@@ -77,6 +124,9 @@ The user provides a skill name or description.
 - Clean up:
   ```bash
   rm -rf "$tmp_dir"
+  ```
+  ```powershell
+  Remove-Item -Recurse -Force "$tmp_dir"
   ```
 
 ### 5. Confirm

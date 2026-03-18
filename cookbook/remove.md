@@ -38,6 +38,9 @@ If the user confirmed local deletion:
   ```bash
   rm -rf <target_directory>/<name>
   ```
+  ```powershell
+  Remove-Item -Recurse -Force "<target_directory>\<name>"
+  ```
 
 ### 6. Commit and Push
 ```bash

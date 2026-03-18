@@ -18,7 +18,7 @@ A meta-skill for private-first distribution of agentics (skills, agents, and pro
 
 ## How It Works
 
-The Library is a catalog of references to your agentics. The `library.yaml` file points to where skills, agents, and prompts live (local filesystem or GitHub repos). Nothing is fetched until you ask for it.
+The Library is a catalog of references to your agentics. The `library.yaml` file points to where skills, agents, and prompts live (local filesystem, GitHub repos, or Azure DevOps repos). Nothing is fetched until you ask for it.
 
 **The `library.yaml` is a catalog, not a manifest.** Entries define what's *available* — not what gets installed. You pull specific items on demand with `/library use <name>`.
 
@@ -56,7 +56,7 @@ Each command has a detailed step-by-step guide. **Read the relevant cookbook fil
 
 The `source` field in `library.yaml` supports these formats (auto-detected):
 
-- `/absolute/path/to/SKILL.md` — local filesystem
+- `/absolute/path/to/SKILL.md` or `C:\path\to\SKILL.md` — local filesystem
 - `https://github.com/org/repo/blob/main/path/to/SKILL.md` — GitHub browser URL
 - `https://raw.githubusercontent.com/org/repo/main/path/to/SKILL.md` — GitHub raw URL
 - `https://dev.azure.com/org/project/_git/repo?path=/path/to/SKILL.md&version=GBmain` — Azure DevOps browser URL
@@ -70,8 +70,9 @@ All URL formats are auto-detected. Parse org, repo, branch, and file path from t
 
 ## Source Parsing Rules
 
-**Local paths** start with `/` or `~`:
+**Local paths** start with `/`, `~`, or a drive letter (e.g., `C:\`, `D:\`):
 - Use the path directly. Copy the parent directory of the referenced file.
+- Resolve `~` to the user's home directory on all platforms before running shell commands.
 
 **GitHub browser URLs** match `https://github.com/<org>/<repo>/blob/<branch>/<path>`:
 - Parse: `org`, `repo`, `branch`, `file_path`
@@ -102,6 +103,14 @@ All URL formats are auto-detected. Parse org, repo, branch, and file path from t
 - Parse: `org`, `project`, `repo`, `file_path` (after `//`), `branch` (after `#`, defaults to `main` if absent)
 - Clone URL: `git@ssh.dev.azure.com:v3/<org>/<project>/<repo>`
 - File location within repo: `<path>`
+
+## Platform Notes
+
+- Use bash command examples on macOS/Linux.
+- Use PowerShell command examples on Windows.
+- Keep clone, copy, verify, and cleanup as separate steps so failures are easier to detect and recover from.
+
+> **Cloud-synced paths:** If the workspace or target directory is inside OneDrive, Dropbox, Google Drive, or a similar synced folder, file operations may be slower. Prefer separate create/copy/verify/cleanup steps instead of compound shell commands.
 
 ## GitHub Workflow
 

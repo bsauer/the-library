@@ -31,6 +31,11 @@ mkdir -p <LIBRARY_SKILL_DIR>
 cd <LIBRARY_SKILL_DIR>
 git clone <fork_url> .
 ```
+```powershell
+New-Item -ItemType Directory -Force -Path <LIBRARY_SKILL_DIR>
+Set-Location <LIBRARY_SKILL_DIR>
+git clone <fork_url> .
+```
 
 If already cloned (e.g., user cloned the template first), just update the remote per step 2.
 

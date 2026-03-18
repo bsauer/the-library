@@ -81,7 +81,7 @@ The catalog stores pointers, not copies. Skills live in their source repos. You 
 
 | Format                | Example                                                                          |
 | --------------------- | -------------------------------------------------------------------------------- |
-| Local filesystem      | `/absolute/path/to/SKILL.md`                                                     |
+| Local filesystem      | `/absolute/path/to/SKILL.md` or `C:\path\to\SKILL.md`                            |
 | GitHub browser URL    | `https://github.com/org/repo/blob/main/path/to/SKILL.md`                         |
 | GitHub raw URL        | `https://raw.githubusercontent.com/org/repo/main/path/to/SKILL.md`               |
 | Azure DevOps browser  | `https://dev.azure.com/org/project/_git/repo?path=/path/to/SKILL.md&version=GBmain` |
@@ -92,6 +92,8 @@ The catalog stores pointers, not copies. Skills live in their source repos. You 
 The source points to a specific file. The system pulls the entire parent directory (skills include scripts, references, assets — not just the markdown file).
 
 For private repos, authentication uses SSH keys, `GITHUB_TOKEN` (GitHub), or PAT / Azure AD credentials (Azure DevOps) automatically.
+
+On Windows, drive-letter paths like `C:\Users\me\projects\my-skill\SKILL.md` are valid local sources. When command examples differ by platform, use bash on macOS/Linux and PowerShell on Windows.
 
 ### Typed Dependencies
 
@@ -107,11 +109,11 @@ Dependencies are resolved and pulled first, recursively.
 
 - **Cursor** (or a compatible agent harness that reads `.cursor/skills/` — e.g., Claude Code, Pi)
 - **git** — for cloning sources and syncing the catalog
-- **gh** (optional) — GitHub CLI for forking, cloning, and private repo access. Install: `brew install gh` or see [gh docs](https://cli.github.com)
+- **gh** (optional) — GitHub CLI for forking, cloning, and private repo access. Install with your platform package manager (for example, `brew install gh`) or see [gh docs](https://cli.github.com)
 - **az repos** (optional) — Azure CLI with DevOps extension for Azure DevOps repo access. Install: `az extension add --name azure-devops`
 - **GitHub SSH key or `GITHUB_TOKEN`** — for accessing private GitHub repos (not needed if using `gh auth login`)
 - **Azure DevOps PAT, SSH key, or Azure AD credentials** — for accessing private Azure DevOps repos (not needed if using Git Credential Manager)
-- **just** (optional) — for justfile shortcuts. Install: `brew install just` or see [just docs](https://github.com/casey/just)
+- **just** (optional) — for justfile shortcuts. Install with your platform package manager (for example, `brew install just`) or see [just docs](https://github.com/casey/just)
 
 ## Installation
 
@@ -140,6 +142,14 @@ git clone <your-fork-url> ~/.cursor/skills/library
 # Or using GitHub CLI
 gh repo clone <yourname>/the-library ~/.cursor/skills/library
 ```
+
+```powershell
+# Using git in PowerShell
+New-Item -ItemType Directory -Force -Path "$HOME/.cursor/skills/library"
+git clone <your-fork-url> "$HOME/.cursor/skills/library"
+```
+
+If you are on Windows, the cookbook files include PowerShell-friendly command variants for install, use, sync, push, and remove flows.
 
 ### 3. Configure
 
@@ -224,7 +234,7 @@ Pull the latest version of all installed items:
 
 ### Justfile Shortcuts
 
-The included `justfile` lets you run library commands from your terminal without an interactive Claude session.
+The included `justfile` lets you run library commands from your terminal without opening an interactive Cursor session.
 
 ```bash
 just list                  # List catalog

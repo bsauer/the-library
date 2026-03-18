@@ -4,19 +4,19 @@ overview: Review confirms all four suggestions in `library-enhancements.md` are 
 todos:
   - id: skill-shared-guidance
     content: Update SKILL.md with Windows path detection, shell-compatibility guidance, and cloud-synced path warning
-    status: pending
+    status: completed
   - id: use-cross-platform
     content: Refactor cookbook/use.md fetch steps into discrete cross-platform instructions
-    status: pending
+    status: completed
   - id: sync-cross-platform
     content: Refactor cookbook/sync.md fetch steps and dependency ordering for cross-platform reliability
-    status: pending
+    status: completed
   - id: cookbook-consistency
     content: Update push/install/remove/add cookbooks for PowerShell-safe command guidance and wording consistency
-    status: pending
+    status: completed
   - id: readme-alignment
     content: Align README.md with the new cross-platform guidance and remaining Cursor wording
-    status: pending
+    status: completed
 isProject: false
 ---
 

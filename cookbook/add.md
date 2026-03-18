@@ -23,7 +23,7 @@ Figure out the type from the user's prompt or the source path:
 - If ambiguous, ask the user
 
 ### 3. Validate the Source
-- **Local path**: Verify the file exists at the given path
+- **Local path**: Verify the file exists at the given path (`/path/...`, `~/path/...`, or `C:\path\...`)
 - **GitHub URL**: Verify the URL is well-formed (matches browser, raw, or SSH URL patterns)
 - **Azure DevOps URL**: Verify the URL is well-formed (matches browser, API, or SSH URL patterns)
 - Confirm the source points to a specific file, not a directory
